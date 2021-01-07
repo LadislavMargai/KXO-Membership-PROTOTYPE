@@ -53,7 +53,7 @@ namespace ConfArch.Web
 
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "admin/client/build"; // Or any other folder
+                configuration.RootPath = "admin/reactApp/build"; // Or any other folder
             });
         }
 
@@ -75,10 +75,10 @@ namespace ConfArch.Web
 
                 adminApp.UseSpa(spa =>
                 {
-                    spa.Options.SourcePath = "admin/client";
+                    spa.Options.SourcePath = "admin/reactApp";
                     spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
                     {
-                        FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "admin", "client"))
+                        FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "admin", "reactApp"))
                     };
 
                     if (env.IsDevelopment())
