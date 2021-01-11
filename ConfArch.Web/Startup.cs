@@ -98,6 +98,8 @@ namespace ConfArch.Web
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Conference}/{action=Index}/{id?}");

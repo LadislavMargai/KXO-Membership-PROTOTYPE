@@ -1,24 +1,55 @@
-import logo from './logo.svg';
-import './App.css';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+import Login from "./Pages/login";
+import Home from "./Pages/home";
+import React, { useState } from 'react';
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  const storeUser = (data) => {
+    setUser(data);
+  }
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    
+    <Router>
+      <div>
+        {/* <h4>{user}</h4> */}
+
+        Navigation menu:
+        <ul>
+          <li>
+            <Link to="/admin">Home</Link>
+          </li>
+          <li>
+            <Link to="/admin/login">Login</Link>
+          </li>
+          <li>
+            <a href="#">Sign out</a>
+          </li>
+
+        </ul>
+
+        <hr />
+
+        <Switch>
+          <Route exact path="/admin/">
+            <Home user={user} />
+          </Route>
+          <Route exact path="/admin/login">
+            <Login storeUser={storeUser} />
+          </Route>
+
+          {/* Problem: Nedari se mi excludovat podstrom z React routeru: "/admin/api/login" - porad se chyta router */}
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
