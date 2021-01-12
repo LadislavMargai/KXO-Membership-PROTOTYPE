@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,8 +38,8 @@ namespace Kentico.Admin
                 return Unauthorized();
             }
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                identityManager.GetPrincipal(user, CookieAuthenticationDefaults.AuthenticationScheme),
+            await HttpContext.SignInAsync(KenticoConstants.AUTHENTICATION_SCHEME,
+                identityManager.GetPrincipal(user, KenticoConstants.AUTHENTICATION_SCHEME),
                 new AuthenticationProperties { IsPersistent = false });
 
             return Ok();
@@ -50,13 +49,13 @@ namespace Kentico.Admin
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(KenticoConstants.AUTHENTICATION_SCHEME);
 
             return Redirect("/");
         }
 
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = KenticoConstants.AUTHENTICATION_SCHEME)]
         public IActionResult MyProfile()
         {
             var currentUser = userRepository.GetByUserName(HttpContext.User.Identity.Name);

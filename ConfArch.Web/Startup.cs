@@ -40,17 +40,20 @@ namespace ConfArch.Web
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
                     assembly => assembly.MigrationsAssembly(typeof(ConfArchDbContext).Assembly.FullName)));
 
-            services.AddAuthentication(o => { 
-                o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //o.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-            })
-                .AddCookie()
+            services.AddAuthentication(o => o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(ExternalAuthenticationDefaults.AuthenticationScheme)
                 .AddGoogle(o =>
                 {
                     o.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
                     o.ClientId = Configuration["Google:ClientId"];
                     o.ClientSecret = Configuration["Google:ClientSecret"];
+                })
+                
+                /* Kentico related */
+                .AddCookie(KenticoConstants.AUTHENTICATION_SCHEME, options =>
+                {
+                    options.Cookie.Name = KenticoConstants.AUTHENTICATION_SCHEME;
                 });
 
             services.AddSpaStaticFiles(configuration =>
