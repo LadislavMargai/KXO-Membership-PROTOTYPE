@@ -41,7 +41,11 @@ namespace ConfArch.Web
                     assembly => assembly.MigrationsAssembly(typeof(ConfArchDbContext).Assembly.FullName)));
 
             services.AddAuthentication(o => o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.Events.OnSigningIn = IdentityManager.ConfigureAutomaticSignInForAdministration;
+                    options.Events.OnSigningOut = IdentityManager.ConfigureAutomaticSignOutForAdministration;
+                })
                 .AddCookie(ExternalAuthenticationDefaults.AuthenticationScheme)
                 .AddGoogle(o =>
                 {

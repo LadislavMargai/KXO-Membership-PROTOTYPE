@@ -47,9 +47,9 @@ namespace Kentico.Admin
 
 
         [HttpPost]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
-            await HttpContext.SignOutAsync(KenticoConstants.AUTHENTICATION_SCHEME);
+            identityManager.SignOutEveryWhere(HttpContext);
 
             return Redirect("/");
         }

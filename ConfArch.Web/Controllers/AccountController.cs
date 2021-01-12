@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using ConfArch.Data.Repositories;
-using ConfArch.Web.Models;
 using Kentico.Admin;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -16,17 +14,22 @@ namespace ConfArch.Web.Controllers
     public class AccountController : Controller
     {
         private readonly IUserRepository userRepository;
+        private readonly IIdentityManager identityManager;
 
-        public AccountController(IUserRepository userRepository)
+
+        public AccountController(IUserRepository userRepository, IIdentityManager identityManager)
         {
             this.userRepository = userRepository;
+            this.identityManager = identityManager;
         }
+
 
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = "/")
         {
             return View(new Models.LoginModel { ReturnUrl = returnUrl });
         }
+
 
         [HttpPost]
         [AllowAnonymous]
@@ -56,6 +59,7 @@ namespace ConfArch.Web.Controllers
             return LocalRedirect(model.ReturnUrl);
         }
 
+
         [AllowAnonymous]
         public IActionResult LoginWithGoogle(string returnUrl = "/")
         {
@@ -69,6 +73,7 @@ namespace ConfArch.Web.Controllers
             };
             return Challenge(props, GoogleDefaults.AuthenticationScheme);
         }
+
 
         [AllowAnonymous]
         public async Task<IActionResult> GoogleLoginCallback()
@@ -97,15 +102,17 @@ namespace ConfArch.Web.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            // delete temporary cookie used during google authentication
+            // Delete temporary cookie used during google authentication
             await HttpContext.SignOutAsync(
                 ExternalAuthenticationDefaults.AuthenticationScheme);
 
+            // Authenticate only on live site
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
             return LocalRedirect(result.Properties.Items["returnUrl"]);
         }
+
 
         public async Task<IActionResult> Logout()
         {
