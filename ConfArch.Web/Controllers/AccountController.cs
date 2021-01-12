@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using ConfArch.Data.Repositories;
 using ConfArch.Web.Models;
+using Kentico.Admin;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -24,12 +25,12 @@ namespace ConfArch.Web.Controllers
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = "/")
         {
-            return View(new LoginModel { ReturnUrl = returnUrl });
+            return View(new Models.LoginModel { ReturnUrl = returnUrl });
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginModel model)
+        public async Task<IActionResult> Login(Models.LoginModel model)
         {
             var user = userRepository.GetByUsernameAndPassword(model.Username, model.Password);
             if (user == null)
@@ -82,7 +83,7 @@ namespace ConfArch.Web.Controllers
                 x => x.Type == ClaimTypes.NameIdentifier);
             var subjectValue = subjectIdClaim.Value;
 
-            var user = userRepository.GetByGoogleId(subjectValue);
+            var user = userRepository.GetByExternalId(subjectValue);
 
             var claims = new List<Claim>
             {

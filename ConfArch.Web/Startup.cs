@@ -1,5 +1,6 @@
 using ConfArch.Data;
 using ConfArch.Data.Repositories;
+using Kentico.Admin;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
@@ -33,6 +34,7 @@ namespace ConfArch.Web
             services.AddScoped<IProposalRepository, ProposalRepository>();
             services.AddScoped<IAttendeeRepository, AttendeeRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IIdentityManager, IdentityManager>();
 
             services.AddDbContext<ConfArchDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
