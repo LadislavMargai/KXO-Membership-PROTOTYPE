@@ -11,7 +11,7 @@ async function loginUser(credentials) {
     body: JSON.stringify(credentials)
   })
     .catch(function () {
-      alert("UNAUTHORIZED");
+      alert("LOGIN ERROR");
     })
     .then(data => data.json())
 }

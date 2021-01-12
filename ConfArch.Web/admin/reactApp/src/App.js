@@ -7,21 +7,19 @@ import {
 import Login from "./Pages/login";
 import Home from "./Pages/home";
 import React, { useState } from 'react';
+import Signout from "./Components/Signout";
 
 function App() {
   const [user, setUser] = useState(null);
-
+  
   const storeUser = (data) => {
     setUser(data);
   }
-
 
   return (
     
     <Router>
       <div>
-        {/* <h4>{user}</h4> */}
-
         Navigation menu:
         <ul>
           <li>
@@ -31,7 +29,7 @@ function App() {
             <Link to="/admin/login">Login</Link>
           </li>
           <li>
-            <a href="#">Sign out</a>
+            <Signout storeUser={storeUser} />
           </li>
 
         </ul>
