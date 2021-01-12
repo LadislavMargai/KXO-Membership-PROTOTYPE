@@ -54,5 +54,18 @@ namespace Kentico.Admin
 
             return Redirect("/");
         }
+
+
+        [Authorize]
+        public IActionResult MyProfile()
+        {
+            var currentUser = userRepository.GetByUserName(HttpContext.User.Identity.Name);
+            if (currentUser == null)
+            {
+                return BadRequest();
+            }
+            
+            return Ok(new UserInfo(currentUser));
+        }
     }
 }

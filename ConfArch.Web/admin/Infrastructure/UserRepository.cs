@@ -29,6 +29,12 @@ namespace Kentico.Admin
         }
 
 
+        public IUser GetByUserName(string userName)
+        {
+            return Users.SingleOrDefault(u => u.Name == userName);
+        }
+
+
         public IUser GetByExternalId(string externalId)
         {
             return Users.SingleOrDefault(u => u.ExternalId == externalId);
