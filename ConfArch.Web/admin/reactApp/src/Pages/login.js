@@ -3,35 +3,43 @@ import { useHistory } from "react-router-dom";
 
 
 async function loginUser(credentials) {
-  return fetch('/api/admin/login', {
+  return fetch('/api/admin/KenticoAccount/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(credentials)
   })
-    .catch(function () {
-      alert("LOGIN ERROR");
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("LoginUser error: HTTP " + response.status);
+      } else {
+        return true;
+      }
     })
-    .then(data => data.json())
+    .catch(function (error) {
+      alert(error);
+    });
 }
 
-export default function Login({ storeUser }) {
+export default function Login() {
 
   const [username, setUsername] = useState('');
   const handleChangeUsername = (e) => setUsername(e.target.value);
+  const [password, setPassword] = useState('');
+  const handleChangePassword = (e) => setPassword(e.target.value);
   const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const user = await loginUser({
+    const successful = await loginUser({
       userName: username,
-      password: ''
+      password: password
     });
 
-    storeUser(user);
-
-    history.push("/admin");
+    if (successful) {
+      history.push("/admin");
+    }
   }
 
   return (
@@ -45,7 +53,7 @@ export default function Login({ storeUser }) {
         </label>
         <label>
           <p>Password</p>
-          <input type="password" />
+          <input type="password" id="userPasswordReact" onChange={handleChangePassword} />
         </label>
         <div>
           <button type="submit">Submit</button>

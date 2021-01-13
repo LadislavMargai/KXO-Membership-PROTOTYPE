@@ -2,50 +2,44 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  NavLink
 } from "react-router-dom";
 import Login from "./Pages/login";
-import Home from "./Pages/home";
-import React, { useState } from 'react';
-import Signout from "./Components/Signout";
+import Dashboard from "./Pages/dashboard";
+import React from 'react';
+import Logout from "./Components/Logout";
 
 function App() {
-  const [user, setUser] = useState(null);
-  
-  const storeUser = (data) => {
-    setUser(data);
-  }
-
   return (
-    
     <Router>
       <div>
-        Navigation menu:
-        <ul>
-          <li>
-            <Link to="/admin">Home</Link>
-          </li>
-          <li>
-            <Link to="/admin/login">Login</Link>
-          </li>
-          <li>
-            <Signout storeUser={storeUser} />
-          </li>
+        <div className="nav">
+          <ul>
+            <li>
+              <NavLink to="/admin" exact activeClassName="selected">Dashboard</NavLink>
+            </li>
+            <li>
+              <NavLink to="/admin/login" exact activeClassName="selected">Login</NavLink>
+            </li>
+            <li>
+              <Logout />
+            </li>
 
-        </ul>
-
+          </ul>
+        </div>
         <hr />
+        <div>
+          <Switch>
+            <Route exact path="/admin/">
+              <Dashboard />
+            </Route>
+            <Route exact path="/admin/login">
+              <Login />
+            </Route>
 
-        <Switch>
-          <Route exact path="/admin/">
-            <Home user={user} />
-          </Route>
-          <Route exact path="/admin/login">
-            <Login storeUser={storeUser} />
-          </Route>
-
-          {/* Problem: Nedari se mi excludovat podstrom z React routeru: "/admin/api/login" - porad se chyta router */}
-        </Switch>
+            {/* Problem: Nedari se mi excludovat podstrom z React routeru: "/admin/api/login" - porad se chyta router */}
+          </Switch>
+        </div>
       </div>
     </Router>
   );

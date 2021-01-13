@@ -51,6 +51,8 @@ namespace Kentico.Admin
         {
             identityManager.SignOutEveryWhere(HttpContext);
 
+            // Je otazka, jestli redirectovat na serveru ... protoze se jedna o XHR request. A nebo ma byt Logout request full post?
+            // Client si to pak nacachuje a uz me to nechce potom podruhe odhlasit. Rovnou ten XHR logou request redirectne na "/" a nic se nestane
             return Redirect("/");
         }
 
@@ -58,6 +60,7 @@ namespace Kentico.Admin
         [Authorize(AuthenticationSchemes = KenticoConstants.AUTHENTICATION_SCHEME)]
         public IActionResult MyProfile()
         {
+            // TODO: Dostanu se sem, ikdyz nejsem autentizovany
             var currentUser = userRepository.GetByUserName(HttpContext.User.Identity.Name);
             if (currentUser == null)
             {
