@@ -30,7 +30,7 @@ namespace Kentico.Admin
                 {
                     options.ForwardDefaultSelector = context =>
                     {
-                        if (context.Items.ContainsKey("VirtualContext") || context.Request.Path.StartsWithSegments("/admin"))
+                        if (context.Items.ContainsKey("VirtualContext") || context.Request.Path.StartsWithSegments("/api/admin"))
                         {
                             return KenticoConstants.AUTHENTICATION_SCHEME;
                         }
