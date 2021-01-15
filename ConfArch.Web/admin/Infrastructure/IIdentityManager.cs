@@ -8,6 +8,9 @@ namespace Kentico.Admin
         ClaimsPrincipal GetPrincipal(IUser user, string scheme);
 
 
+        void SignInEveryWhere(HttpContext httpContext, IUser user);
+
+
         void SignOutEveryWhere(HttpContext httpContext);
     }
 }

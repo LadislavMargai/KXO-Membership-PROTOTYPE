@@ -1,20 +1,16 @@
-using ConfArch.Data;
-using ConfArch.Data.Repositories;
-using Kentico.Admin;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.IO;
+
+using ConfArch.Data;
+using ConfArch.Data.Repositories;
+
+using Kentico.Admin;
 
 namespace ConfArch.Web
 {
@@ -40,30 +36,24 @@ namespace ConfArch.Web
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
                     assembly => assembly.MigrationsAssembly(typeof(ConfArchDbContext).Assembly.FullName)));
 
-            services.AddAuthentication(o => o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme)
+
+            services.AddKenticoAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
-                    options.Events.OnSigningIn = IdentityManager.ConfigureAutomaticSignInForAdministration;
-                    options.Events.OnSigningOut = IdentityManager.ConfigureAutomaticSignOutForAdministration;
+                    // Kentico hooks
+                    options.Events.OnSigningIn = IdentityManager.AdministrationAutoSignIn;
+                    options.Events.OnSigningOut = IdentityManager.AdministrationAutoSignOut;
                 })
                 .AddCookie(ExternalAuthenticationDefaults.AuthenticationScheme)
-                .AddGoogle(o =>
+                .AddGoogle(options =>
                 {
-                    o.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
-                    o.ClientId = Configuration["Google:ClientId"];
-                    o.ClientSecret = Configuration["Google:ClientSecret"];
-                })
-                
-                /* Kentico related */
-                .AddCookie(KenticoConstants.AUTHENTICATION_SCHEME, options =>
-                {
-                    options.Cookie.Name = KenticoConstants.AUTHENTICATION_SCHEME;
+                    options.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
+                    options.ClientId = Configuration["Google:ClientId"];
+                    options.ClientSecret = Configuration["Google:ClientSecret"];
                 });
 
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "admin/reactApp/build"; // Or any other folder
-            });
+
+            services.AddKenticoSpaFiles();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -78,24 +68,8 @@ namespace ConfArch.Web
                 app.UseHsts();
             }
 
-            app.MapWhen(context => context.Request.Path.Value.StartsWith("/admin", StringComparison.OrdinalIgnoreCase), (adminApp) =>
-            {
-                adminApp.UseSpaStaticFiles();
-
-                adminApp.UseSpa(spa =>
-                {
-                    spa.Options.SourcePath = "admin/reactApp";
-                    spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
-                    {
-                        FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "admin", "reactApp"))
-                    };
-
-                    if (env.IsDevelopment())
-                    {
-                        spa.UseReactDevelopmentServer(npmScript: "start");
-                    }
-                });
-            });
+            app.UseKenticoRewriter();
+            app.UseKenticoSpaAdmin(env);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -8,7 +9,8 @@ namespace Kentico.Admin
 {
     public class IdentityManager : IIdentityManager
     {
-        private static List<string> liveSiteSchemes = new List<string>();
+        private static string defaultScheme;
+        private static bool authenticateLiveSite;
 
 
         public ClaimsPrincipal GetPrincipal(IUser user, string scheme)
@@ -27,36 +29,52 @@ namespace Kentico.Admin
         }
 
 
-        public static Task ConfigureAutomaticSignInForAdministration<TOptions>(PrincipalContext<TOptions> principalContext) where TOptions : AuthenticationSchemeOptions
+        public void SignInEveryWhere(HttpContext httpContext, IUser user)
+        {
+            if (!string.IsNullOrEmpty(defaultScheme) || authenticateLiveSite)
+            {
+                httpContext.SignInAsync(defaultScheme, GetPrincipal(user, defaultScheme), new AuthenticationProperties { IsPersistent = false });
+            }
+
+            httpContext.SignInAsync(KenticoConstants.AUTHENTICATION_SCHEME, GetPrincipal(user, KenticoConstants.AUTHENTICATION_SCHEME), new AuthenticationProperties { IsPersistent = false });
+        }
+
+
+        public void SignOutEveryWhere(HttpContext httpContext)
+        {
+            if (!string.IsNullOrEmpty(defaultScheme))
+            {
+                httpContext.SignOutAsync(defaultScheme);
+            }
+
+            httpContext.SignOutAsync(KenticoConstants.AUTHENTICATION_SCHEME);
+        }
+
+
+        public static void RegisterScheme(string scheme, bool authenticateLiveSiteOption)
+        {
+            defaultScheme = scheme;
+            authenticateLiveSite = authenticateLiveSiteOption;
+        }
+
+
+        public static async Task AdministrationAutoSignIn<TOptions>(PrincipalContext<TOptions> principalContext) where TOptions : AuthenticationSchemeOptions
         {
             var userRepository = new UserRepository();
             var user = userRepository.GetByUserName(principalContext.Principal.Identity.Name);
 
             if (user?.Role.Equals("admin") == true)
             {
-                liveSiteSchemes.Add(principalContext.Scheme.Name);
-                principalContext.HttpContext.SignInAsync(KenticoConstants.AUTHENTICATION_SCHEME,
+                await principalContext.HttpContext.SignInAsync(KenticoConstants.AUTHENTICATION_SCHEME,
                     new IdentityManager().GetPrincipal(user, KenticoConstants.AUTHENTICATION_SCHEME),
                     new AuthenticationProperties { IsPersistent = false });
             }
-
-            return Task.FromResult(true);
         }
 
 
-        public static Task ConfigureAutomaticSignOutForAdministration<TOptions>(PropertiesContext<TOptions> propertiesContext) where TOptions : AuthenticationSchemeOptions
+        public static async Task AdministrationAutoSignOut<TOptions>(PropertiesContext<TOptions> propertiesContext) where TOptions : AuthenticationSchemeOptions
         {
-            propertiesContext.HttpContext.SignOutAsync(KenticoConstants.AUTHENTICATION_SCHEME);
-
-            return Task.FromResult(true);
-        }
-
-
-        public void SignOutEveryWhere(HttpContext httpContext)
-        {
-            liveSiteSchemes.ForEach(scheme => httpContext.SignOutAsync(scheme));
-
-            httpContext.SignOutAsync(KenticoConstants.AUTHENTICATION_SCHEME);
+            await propertiesContext.HttpContext.SignOutAsync(KenticoConstants.AUTHENTICATION_SCHEME);
         }
     }
 }
