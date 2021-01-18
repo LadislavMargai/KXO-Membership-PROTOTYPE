@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from "react-router-dom";
+import ExternalAuthenticationMethods from "../Components/ExternalAuthenticationMethods";
 
 
 async function loginUser(credentials) {
@@ -46,19 +47,26 @@ export default function Login() {
     <div>
       <h2>Login</h2>
 
-      <form onSubmit={handleSubmit}>
-        <label>
-          <p>Username</p>
-          <input type="text" id="usernameReact" onChange={handleChangeUsername} />
-        </label>
-        <label>
-          <p>Password</p>
-          <input type="password" id="userPasswordReact" onChange={handleChangePassword} />
-        </label>
-        <div>
-          <button type="submit">Submit</button>
+      <div className="authMethods">
+        <form onSubmit={handleSubmit}>
+          <strong>Individual user account</strong>
+          <label>
+            <p>Username</p>
+            <input type="text" id="usernameReact" onChange={handleChangeUsername} />
+          </label>
+          <label>
+            <p>Password</p>
+            <input type="password" id="userPasswordReact" onChange={handleChangePassword} />
+          </label>
+          <div>
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+        <div className="otherAuthMethods">
+          <strong>External authentication</strong>
+          <ExternalAuthenticationMethods />
         </div>
-      </form>
+      </div>
     </div>
   );
 }

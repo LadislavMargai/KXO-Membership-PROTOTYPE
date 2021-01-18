@@ -28,7 +28,7 @@ const AuthenticatedUserDetails = function () {
         (user) => setUser(user),
         // Error
         (error) => { if (error) { alert(error); }}
-      )
+      );
 
     // React needs to cleanup the useEffect for the login redirect
     return () => { };

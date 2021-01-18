@@ -35,3 +35,22 @@ code {
   padding: 10px;
   color: black;
 }
+
+.authMethods {
+  display: flex;
+} 
+
+.authMethods form {
+  margin-right: 100px;
+}
+
+.otherAuthMethods div {
+  margin: 32px 0;
+}
+
+.otherAuthMethods div a {
+  background-color: lightskyblue;
+  text-decoration: none;
+  padding: 10px;
+  color: black;
+}
