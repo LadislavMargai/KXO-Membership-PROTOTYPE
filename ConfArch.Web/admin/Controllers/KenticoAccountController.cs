@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -62,6 +63,12 @@ namespace Kentico.Admin
             }
             
             return Ok(new UserInfo(currentUser));
+        }
+
+
+        public IActionResult ExternalAuthenticationMethods()
+        {
+            return Ok(IdentityManager.AdminExternalAuthentication.Select(pair => new { Url = pair.Key, Name = pair.Value }));
         }
     }
 }

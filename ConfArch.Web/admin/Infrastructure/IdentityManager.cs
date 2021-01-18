@@ -11,6 +11,7 @@ namespace Kentico.Admin
     {
         private static string defaultScheme;
         private static bool authenticateLiveSite;
+        public static Dictionary<string, string> AdminExternalAuthentication = new Dictionary<string, string>();
 
 
         public ClaimsPrincipal GetPrincipal(IUser user, string scheme)

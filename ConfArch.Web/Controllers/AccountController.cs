@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Kentico.Admin;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
@@ -109,6 +110,42 @@ namespace ConfArch.Web.Controllers
             // Authenticate only on live site
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            return LocalRedirect(result.Properties.Items["returnUrl"]);
+        }
+
+
+        [AllowAnonymous]
+        public IActionResult LoginWithAzureAD(string returnUrl = "/")
+        {
+            var props = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("AzureAdLoginCallback"),
+                Items =
+                {
+                    { "returnUrl", returnUrl }
+                }
+            };
+            return Challenge(props, AzureADDefaults.AuthenticationScheme);
+        }
+
+
+        [AllowAnonymous]
+        public async Task<IActionResult> AzureAdLoginCallback()
+        {
+            var result = await HttpContext.AuthenticateAsync(
+                AzureADDefaults.AuthenticationScheme);
+
+            var externalClaims = result.Principal.Claims.ToList();
+
+            var subjectIdClaim = externalClaims.FirstOrDefault(
+                x => x.Type == ClaimTypes.NameIdentifier);
+            var subjectValue = subjectIdClaim.Value;
+
+            var user = userRepository.GetByExternalId(subjectValue);
+
+            await HttpContext.SignOutAsync(AzureADDefaults.AuthenticationScheme);
+            await HttpContext.SignInAsync(KenticoConstants.AUTHENTICATION_SCHEME, identityManager.GetPrincipal(user, KenticoConstants.AUTHENTICATION_SCHEME));
 
             return LocalRedirect(result.Properties.Items["returnUrl"]);
         }

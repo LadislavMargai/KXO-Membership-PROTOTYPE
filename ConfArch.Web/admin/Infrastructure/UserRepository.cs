@@ -10,7 +10,8 @@ namespace Kentico.Admin
         {
             new User { Id = 1, Name = "andy", Password = "ydna", FavoriteColor = "blue", Role = "moderator", ExternalId = null },
             new User { Id = 2, Name = "admin", Password = "nimda", FavoriteColor = "blue", Role = "admin", ExternalId = null },
-            new User { Id = 3, Name = "datagrid.sk@gmail.com", Password = null, FavoriteColor = "orange", Role = "voyer", ExternalId = "105838370131173562976" }
+            new User { Id = 3, Name = "datagrid.sk@gmail.com", Password = null, FavoriteColor = "orange", Role = "voyer", ExternalId = "105838370131173562976" },
+            new User { Id = 4, Name = "LadislavM@kentico.com", Password = null, FavoriteColor = "pink", Role = "admin", ExternalId = "mm4aGPup93jXOXfq0odHK1WwQrEygFdzQ3BCQsAoN4A"}
         });
 
 

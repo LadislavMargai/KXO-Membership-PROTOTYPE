@@ -48,6 +48,14 @@ namespace Kentico.Admin
         }
 
 
+        public static AuthenticationBuilder AddKenticoAdminExternalAuthentication(this AuthenticationBuilder builder, string endpoint, string displayName)
+        {
+            IdentityManager.AdminExternalAuthentication.Add(endpoint, displayName);
+
+            return builder;
+        }
+
+
         public static void AddKenticoSpaFiles(this IServiceCollection services)
         {
             services.AddSpaStaticFiles(configuration =>

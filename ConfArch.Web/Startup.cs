@@ -11,6 +11,7 @@ using ConfArch.Data;
 using ConfArch.Data.Repositories;
 
 using Kentico.Admin;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ConfArch.Web
 {
@@ -36,7 +37,6 @@ namespace ConfArch.Web
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
                     assembly => assembly.MigrationsAssembly(typeof(ConfArchDbContext).Assembly.FullName)));
 
-
             services.AddKenticoAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
@@ -50,7 +50,9 @@ namespace ConfArch.Web
                     options.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
                     options.ClientId = Configuration["Google:ClientId"];
                     options.ClientSecret = Configuration["Google:ClientSecret"];
-                });
+                })
+                .AddAzureAD(options => Configuration.Bind("AzureAd", options))
+                .AddKenticoAdminExternalAuthentication("/Account/LoginWithAzureAD", "Sign-in with AzureAD");
 
 
             services.AddKenticoSpaFiles();
