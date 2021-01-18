@@ -32,7 +32,7 @@ namespace Kentico.Admin
 
         public void SignInEveryWhere(HttpContext httpContext, IUser user)
         {
-            if (!string.IsNullOrEmpty(defaultScheme) || authenticateLiveSite)
+            if (!string.IsNullOrEmpty(defaultScheme) && authenticateLiveSite)
             {
                 httpContext.SignInAsync(defaultScheme, GetPrincipal(user, defaultScheme), new AuthenticationProperties { IsPersistent = false });
             }

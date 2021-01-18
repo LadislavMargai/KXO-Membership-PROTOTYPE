@@ -22,6 +22,9 @@ function App() {
               <NavLink to="/admin/login" exact activeClassName="selected">Login</NavLink>
             </li>
             <li>
+              <a href="/">Live site</a>
+            </li>
+            <li>
               <Logout />
             </li>
 

@@ -52,11 +52,12 @@ namespace ConfArch.Web
                     options.ClientSecret = Configuration["Google:ClientSecret"];
                 })
                 .AddAzureAD(options => Configuration.Bind("AzureAd", options))
-                .AddKenticoAdminExternalAuthentication("/Account/LoginWithAzureAD", "Sign-in with AzureAD");
+                .AddKenticoAdminExternalAuthentication("/Account/LoginWithAzureAD?returnUrl=/admin", "Sign-in with AzureAD");
 
 
             services.AddKenticoSpaFiles();
         }
+
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
